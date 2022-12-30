@@ -3,7 +3,7 @@ project(taco VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(taco src/main.cpp)
+add_executable(taco src/main.cpp src/project.cpp)
 include_directories(taco include)
 target_include_directories(taco PUBLIC "${PROJECT_BINARY_DIR}")
 

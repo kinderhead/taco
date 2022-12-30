@@ -2,21 +2,35 @@
 
 #include "argparse.hpp"
 #include "config.h"
+#include "project.hpp"
 
 using namespace std;
 
 int main(int argc, char** argv) {
     argparse::ArgumentParser program("taco", VERSION);
-
-    program.add_argument("dir")
-        .help("The path to the project")
-        .default_value(string{"."});
     
     argparse::ArgumentParser build_command("build");
     build_command.add_argument("-d", "--debug")
-        .help("Build project with debug info and no optimizations")
+        .help("Build project with debug info and no optimizations. This is the default option");
+    build_command.add_argument("-r", "--release")
+        .help("Build project with optimizations")
         .default_value(false)
         .implicit_value(true);
+    build_command.add_argument("-cc", "--compile_commands")
+        .help("Generates a compile_commands.json in the build folder");
+    
+    program.add_subparser(build_command);
+
+    argparse::ArgumentParser init_command("init");
+    init_command.add_argument("name")
+        .help("Name of the project")
+        .required();
+    init_command.add_argument("version")
+        .help("Version number")
+        .required()
+        .default_value(string{"0.1.0"});
+
+    program.add_subparser(init_command);
 
     try {
         program.parse_args(argc, argv);
@@ -27,7 +41,11 @@ int main(int argc, char** argv) {
         std::exit(1);
     }
 
-    cout << program.get("dir");
+    Project project(".");
+
+    if (program.is_subcommand_used(init_command)) {
+        project = Project::create(".", init_command.get("name"), init_command.get("version"));
+    }
 
     return 0;
 }
