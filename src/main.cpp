@@ -16,8 +16,16 @@ int main(int argc, char** argv) {
         .help("Build project with optimizations")
         .default_value(false)
         .implicit_value(true);
-    build_command.add_argument("-cc", "--compile_commands")
-        .help("Generates a compile_commands.json in the build folder");
+    build_command.add_argument("--dynamic")
+        .help("Build using shared libraries");
+    build_command.add_argument("--static")
+        .help("Build using static libraries")
+        .default_value(false)
+        .implicit_value(true);
+    build_command.add_argument("-c", "--compile_commands")
+        .help("Generates a compile_commands.json in the build folder")
+        .default_value(false)
+        .implicit_value(true);;
     
     program.add_subparser(build_command);
 
@@ -45,6 +53,8 @@ int main(int argc, char** argv) {
 
     if (program.is_subcommand_used(init_command)) {
         project = Project::create(".", init_command.get("name"), init_command.get("version"));
+    } else if (program.is_subcommand_used(build_command)) {
+        project.build(build_command["-r"] == true, build_command["--static"] == true, build_command["-c"] == true);
     }
 
     return 0;

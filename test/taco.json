@@ -1,4 +1,11 @@
 {
+    "dependencies": ["gtkmm-3.0"],
+    "include_dirs": [],
     "name": "test",
+    "source": {
+        "include": "include",
+        "src": "src"
+    },
+    "type": "executable",
     "version": "1.0.0"
 }
